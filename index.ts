@@ -22,30 +22,30 @@ async function connectDB() {
 app.post("/register", async (req: Request, res: Response) => {
     try {
         const db = await connectDB();
-        db.query("INSERT INTO users (name, email, password) VALUES (?,?,?)",
+        await db.query("INSERT INTO users (name, email, password) VALUES (?,?,?)",
             [req.body.name, req.body.email, req.body.password]);
-        res.send({status: 200, message: "Register success"});
-    } catch(e){
-        res.send(e);
+        res.json({ status: 200, message: "Register success" });
+    } catch (e) {
+        res.json({ error: e });
     }
 });
 
-async function tableExists(req: Request){
-        const db = await connectDB();
-        const [result] = await db.query(`SELECT * FROM users WHERE email = ? AND password = ?`,
+async function tableExists(req: Request) {
+    const db = await connectDB();
+    const [result] = await db.query(`SELECT * FROM users WHERE email = ? AND password = ?`,
         [req.body.email, req.body.password]);
-        if (result.length != 0) {
-            return true;
-        } else {
-            return false;
-        }
+    if (result.length != 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 app.post("/login", async (req, res) => {
     const query = await tableExists(req);
 
-    if(query){
-        res.send({ status: 200, message: "Login successful"})
+    if (query) {
+        res.send({ status: 200, message: "Login successful" })
     } else {
         res.send({ status: 401, message: "Invalid login" });
     }
