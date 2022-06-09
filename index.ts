@@ -24,9 +24,9 @@ app.post("/register", async (req: Request, res: Response) => {
         const db = await connectDB();
         await db.query("INSERT INTO users (name, email, password) VALUES (?,?,?)",
             [req.body.name, req.body.email, req.body.password]);
-        res.json({ status: 200, message: "Register success" });
+        res.send({ status: 200, message: "Register success" });
     } catch (e) {
-        res.json({ error: e });
+        res.send({ error: { status: 401, message: "an account with this email already exists"} });
     }
 });
 
