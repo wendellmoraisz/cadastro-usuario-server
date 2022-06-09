@@ -24,7 +24,7 @@ app.post("/register", async (req: Request, res: Response) => {
         const db = await connectDB();
         db.query("INSERT INTO users (name, email, password) VALUES (?,?,?)",
             [req.body.name, req.body.email, req.body.password]);
-        res.send({code: 200, message: "register success"});
+        res.send({status: 200, message: "Register success"});
     } catch(e){
         res.send(e);
     }
@@ -34,20 +34,20 @@ async function tableExists(req: Request){
         const db = await connectDB();
         const [result] = await db.query(`SELECT * FROM users WHERE email = ? AND password = ?`,
         [req.body.email, req.body.password]);
-        if (result.length == 0) {
-            return false;
-        } else {
+        if (result.length != 0) {
             return true;
+        } else {
+            return false;
         }
 }
 
-app.post("/login", async (req: Request, res: Response) => {
+app.post("/login", async (req, res) => {
     const query = await tableExists(req);
-    
+
     if(query){
-        res.send(res)
+        res.send({ status: 200, message: "Login successful"})
     } else {
-        res.send({ message: "Invalid login" });
+        res.send({ status: 401, message: "Invalid login" });
     }
 });
 
